@@ -13,11 +13,11 @@ app.get("/", (_, res) => {
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Document</title>
+      <title>Youssif's Portfolio 🚀</title>
     </head>
     <body>
         <div>
-        <h1>Hi, I'm Youssif 👋</h1>
+        <h1>Hi, I'm Youssif 🔥</h1>
         <p>I'm a web developer and UI designer</p>
         </div>
     </body>
