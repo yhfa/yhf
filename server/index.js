@@ -1,30 +1,41 @@
 const express = require("express");
 const path = require("path");
 const app = express();
+const server = require("http").createServer();
 
-app.use(express.static(path.join(__dirname, "../client/build")));
+app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/", (_, res) => {
-  res.writeHead(200, { "Content-Type": "text/html" });
-  res.write(`
-    
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Youssif's Portfolio 🚀</title>
-    </head>
-    <body>
-        <div>
-        <h1>Hi, I'm Youssif 🔥</h1>
-        <p>I'm a web developer and UI designer</p>
-        </div>
-    </body>
-    </html>
-    `);
-  res.end();
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
+server.on("request", app);
+
 const PORT = 3000;
-app.listen(PORT, () => console.log(`running on port ${PORT}...`));
+server.listen(PORT, () => console.log(`running on`));
+
+// Begin websocket connection
+const WebSocketServer = require("ws").Server;
+const wss = new WebSocketServer({ server });
+
+wss.on("connection", function connection(ws) {
+  const numClients = wss.clients.size;
+  console.log(`${numClients} clients connected`);
+
+  wss.broadcast(`${numClients} clients connected`);
+
+  if (ws.readyState === ws.OPEN) {
+    ws.send(`Welcome to the server! There are ${numClients} clients connected`);
+  }
+
+  ws.on("close", function close() {
+    console.log(`A client has disconnected`);
+    wss.broadcast(`A client has disconnected.`);
+  });
+});
+
+wss.broadcast = function broadcast(data) {
+  wss.clients.forEach(function each(client) {
+    client.send(data);
+  });
+};
